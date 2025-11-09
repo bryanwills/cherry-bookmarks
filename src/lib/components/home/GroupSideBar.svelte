@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Folder } from 'lucide-svelte';
+  import { Folder } from '@lucide/svelte';
   import { onMount } from 'svelte';
 
   import { afterNavigate } from '$app/navigation';
@@ -21,16 +21,26 @@
   let groupAddModal0: GroupAddModal;
   let groupListModal0: GroupListModal;
   let groupDeleteConfirmModal0: GroupDeleteConfirmModal;
-  $: groupAddModal.set(groupAddModal0);
-  $: groupListModal.set(groupListModal0);
-  $: groupDeleteConfirmModal.set(groupDeleteConfirmModal0);
+
+  $effect(() => {
+    groupAddModal.set(groupAddModal0);
+  });
+  $effect(() => {
+    groupListModal.set(groupListModal0);
+  });
+  $effect(() => {
+    groupDeleteConfirmModal.set(groupDeleteConfirmModal0);
+  });
 
   function open() {
     $groupListModal?.open();
   }
 
-  export let pathname = '/settings/about';
-  export let groupId: number | null = null;
+  type Props = {
+    pathname?: string;
+    groupId?: number | null;
+  };
+  let { pathname = '/settings/about', groupId = null }: Props = $props();
 
   afterNavigate(() => {
     loadLastViewdLinks();
@@ -72,18 +82,9 @@
   }
 
   type GroupLinkItem = { href: string; label: string; groupId: number | null };
-  const fixedLinks: GroupLinkItem[] = [
-    { href: '/', label: 'All', groupId: null },
-    // { href: '/?group=0', label: 'Ungrouped', groupId: 0 },
-  ];
+  const fixedLinks: GroupLinkItem[] = [{ href: '/', label: 'All', groupId: null }];
 
-  // let links = fixedLinks;
-  let lastViewedLinks: GroupLinkItem[] = [];
-
-  // $: {
-  //   console.log(links.map((n) => n.label).join(','));
-  //   console.log(lastViewedLinks.map((n) => n.label).join(','));
-  // }
+  let lastViewedLinks: GroupLinkItem[] = $state([]);
 
   function buildGroupLinkItem(group: { id: number; name: string }) {
     return { href: '/?group=' + group.id, label: group.name, groupId: group.id };
@@ -120,7 +121,7 @@
 
   let activeLinkItem: GroupLinkItem;
 
-  $: {
+  $effect(() => {
     if (typeof groupId === 'number' && groupId !== 0) {
       const group = $groupMapById.get(groupId);
       if (group) {
@@ -128,7 +129,7 @@
         ensureLinkInList(activeLinkItem);
       }
     }
-  }
+  });
 
   function handleClickAdd() {
     $groupAddModal?.open();
@@ -150,19 +151,23 @@
     {/each}
     <li class="btn-wrap">
       <Tooltip>
-        <Button slot="trigger" modifier={['minimal']} style="padding:8px 10px" onclick={open}>
-          {#snippet icon()}
-            <Folder size={15} />
-          {/snippet}
-          <VisuallyHidden>Show more groups</VisuallyHidden>
-        </Button>
-        <div class="tooltip-cnt" slot="content">Show more groups</div>
+        {#snippet trigger()}
+          <Button modifier={['minimal']} style="padding:8px 10px" onclick={open}>
+            {#snippet icon()}
+              <Folder size={15} />
+            {/snippet}
+            <VisuallyHidden>Show more groups</VisuallyHidden>
+          </Button>
+        {/snippet}
+        {#snippet content()}
+          <div class="tooltip-cnt">Show more groups</div>
+        {/snippet}
       </Tooltip>
     </li>
   </ul>
 </div>
 
-<GroupListModal bind:this={groupListModal0} itemAs="link" on:clickadd={handleClickAdd} />
+<GroupListModal bind:this={groupListModal0} itemAs="link" clickadd={handleClickAdd} />
 <GroupAddModal bind:this={groupAddModal0} />
 <GroupDeleteConfirmModal bind:this={groupDeleteConfirmModal0} />
 

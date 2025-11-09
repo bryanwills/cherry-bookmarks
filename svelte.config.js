@@ -7,6 +7,15 @@ const config = {
   preprocess: vitePreprocess({ script: true }),
   kit: {
     adapter: adapter(),
+    experimental: {
+      remoteFunctions: true,
+    },
+  },
+  compilerOptions: {
+    runes: true,
+    experimental: {
+      async: true,
+    },
   },
 };
 

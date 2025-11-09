@@ -1,10 +1,10 @@
 <script lang="ts">
-  import chromeLogoUrl from '@browser-logos/chrome/chrome.svg';
-  import firefoxLogoUrl from '@browser-logos/firefox/firefox.svg';
-  import safariLogoUrl from '@browser-logos/safari/safari.svg';
+  import firefoxLogoUrl from '$lib/components/base/icons/firefox.svg';
+  import safariLogoUrl from '$lib/components/base/icons/safari.svg';
 
   import CsvFile from '$lib/components/base/icons/CsvFile.svelte';
   import Pocket from '$lib/components/base/icons/Pocket.svelte';
+  import Chrome from '$lib/components/base/icons/Chrome.svelte';
   import Tab from '$lib/components/base/tabs/Tab.svelte';
   import TabPanel from '$lib/components/base/tabs/TabPanel.svelte';
   import Tabs from '$lib/components/base/tabs/Tabs.svelte';
@@ -17,15 +17,12 @@
 </script>
 
 <Tabs>
-  <svelte:fragment slot="tabList">
+  {#snippet tabList()}
     <Tab idx="pocket" active>
       <div class="item-brand-title"><Pocket size={30} /> Pocket</div>
     </Tab>
     <Tab idx="chrome">
-      <div class="item-brand-title">
-        <figure class="icon" style="background-image:url({chromeLogoUrl});"></figure>
-        <span>Chrome</span>
-      </div>
+      <div class="item-brand-title"><Chrome size={30} /> Chrome</div>
     </Tab>
     <Tab idx="firefox">
       <div class="item-brand-title">
@@ -42,8 +39,8 @@
     <Tab idx="csv">
       <div class="item-brand-title"><CsvFile size={30} /> CSV</div>
     </Tab>
-  </svelte:fragment>
-  <svelte:fragment slot="panels">
+  {/snippet}
+  {#snippet panels()}
     <TabPanel idx="pocket" active>
       <ImportFromPocket />
     </TabPanel>
@@ -59,7 +56,7 @@
     <TabPanel idx="csv">
       <ImportFromCsv />
     </TabPanel>
-  </svelte:fragment>
+  {/snippet}
 </Tabs>
 
 <style lang="scss">

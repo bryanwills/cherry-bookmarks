@@ -1,34 +1,41 @@
 <script lang="ts">
-  import { ArrowUpCircle, Inbox } from 'lucide-svelte';
-  import Dropzone from 'svelte-file-dropzone';
+  import { CircleArrowUp, Inbox } from '@lucide/svelte';
+  // import Dropzone from 'svelte-file-dropzone';
+  import Dropzone from '$lib/components/file-dropzone/Dropzone.svelte';
 
   import Button from '$lib/components/base/Button.svelte';
   import Spinner from '$lib/components/feedback/Spinner.svelte';
 
   import type { DropzoneFiles } from './import.shared';
 
-  export let startImport: (files: DropzoneFiles) => unknown;
-  export let loading: boolean;
-  export let accept: string | string[];
+  type Props = {
+    startImport: (files: DropzoneFiles) => unknown;
+    loading: boolean;
+    accept: string | string[];
+  };
+
+  let { startImport, loading, accept }: Props = $props();
 
   const filesInitial: DropzoneFiles = { accepted: [], rejected: [] };
-  let files = filesInitial;
+  let files = $state(filesInitial);
 
   function handleClickImport() {
     startImport(files);
   }
 
   async function handleFilesSelect(e: any) {
-    const { acceptedFiles, fileRejections } = e.detail;
+    const { acceptedFiles, fileRejections } = e;
 
     files.accepted = [...acceptedFiles];
     files.rejected = [...fileRejections];
   }
 
-  let dragenter = false;
+  let dragenter = $state(false);
+
   function handleDragenter() {
     dragenter = true;
   }
+
   function handleDragleave() {
     dragenter = false;
   }
@@ -40,14 +47,12 @@
     multiple={false}
     {accept}
     disableDefaultStyles
-    on:drop={handleFilesSelect}
-    on:dragenter={handleDragenter}
-    on:dragleave={handleDragleave}
-    on:filedropped={handleDragleave}
+    ondrop={handleFilesSelect}
+    ondragenter={handleDragenter}
+    ondragleave={handleDragleave}
+    onfiledropped={handleDragleave}
   >
-    <div class="inbox-icon">
-      <Inbox />
-    </div>
+    <div class="inbox-icon"><Inbox /></div>
     <p>Click or drag your file here</p>
     {#if files.accepted[0]}
       <p class="note">File: {files.accepted[0].name}</p>
@@ -62,7 +67,7 @@
       {#if loading}
         <Spinner size={18} />
       {:else}
-        <ArrowUpCircle size={18} />
+        <CircleArrowUp size={18} />
       {/if}
     {/snippet}
 

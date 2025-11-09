@@ -1,14 +1,18 @@
 <script lang="ts">
-  import { FilterIcon } from 'lucide-svelte';
+  import { Funnel } from '@lucide/svelte';
 
-  export let value = '';
+  type Props = {
+    value?: string;
+  };
+
+  let { value = $bindable('') }: Props = $props();
 </script>
 
 <div class="root">
   <div class="input-wrap">
     <input placeholder="Search" bind:value />
     <span class="icon-wrap">
-      <FilterIcon size={16} />
+      <Funnel size={16} />
     </span>
   </div>
 </div>

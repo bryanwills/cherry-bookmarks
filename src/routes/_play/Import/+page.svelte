@@ -1,33 +1,16 @@
 <script>
-  import { Inbox } from 'lucide-svelte';
-  import Dropzone from 'svelte-file-dropzone';
+  import { Inbox } from '@lucide/svelte';
+  import Dropzone from '$lib/components/file-dropzone/Dropzone.svelte';
 
-  // import { request } from '$lib/utils/http.util';
-
-  let files = {
-    accepted: [],
-    rejected: [],
-  };
+  let files = $state({ accepted: [], rejected: [] });
 
   async function handleFilesSelect(e) {
-    const { acceptedFiles, fileRejections } = e.detail;
-
-    console.log('fileRejections', fileRejections);
-
+    const { acceptedFiles, fileRejections } = e;
     files.accepted = [...acceptedFiles];
     files.rejected = [...fileRejections];
-
-    // const f = files.accepted[0];
-
-    // const ret = await request({
-    //   url: '/api/import',
-    //   method: 'POST',
-    //   data: f,
-    // });
-    // console.log(ret.status);
   }
 
-  let dragenter = false;
+  let dragenter = $state(false);
   function handleDragenter() {
     dragenter = true;
   }
@@ -42,10 +25,10 @@
     multiple={false}
     accept={['text/html']}
     disableDefaultStyles
-    on:drop={handleFilesSelect}
-    on:dragenter={handleDragenter}
-    on:dragleave={handleDragleave}
-    on:filedropped={handleDragleave}
+    ondrop={handleFilesSelect}
+    ondragenter={handleDragenter}
+    ondragleave={handleDragleave}
+    onfiledropped={handleDragleave}
   >
     <div class="inbox-icon">
       <Inbox />
