@@ -26,3 +26,5 @@ src/assets/inter*.woff2
 dist/
 cherry
 .pnpm-store/
+cherries.csv
+cherries.csv.zip

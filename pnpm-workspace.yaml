@@ -7,3 +7,6 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@sveltejs/adapter-node@5.5.5'
   - '@sveltejs/kit@2.66.0'
+update:
+  ignoreDeps:
+    - typescript
