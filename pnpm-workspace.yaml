@@ -2,7 +2,8 @@ engineStrict: true
 allowBuilds:
   '@parcel/watcher': true
   '@sveltejs/kit': true
-  better-sqlite3: true
+  # v13 ships N-API prebuilt binaries; do not invoke pnpm's implicit node-gyp rebuild.
+  better-sqlite3: false
   esbuild: true
 minimumReleaseAgeExclude:
   - '@sveltejs/adapter-node@5.5.5'
