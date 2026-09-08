@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-import * as pkg from './package.json';
+import * as pkg from './package.json' with { type: 'json' };;
 
 export default defineConfig(async () => {
   const hash = process.env.COMMIT_SHA || '';

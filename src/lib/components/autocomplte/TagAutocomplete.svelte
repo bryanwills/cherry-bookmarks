@@ -11,7 +11,6 @@
   import ListboxList from './ListboxList.svelte';
   import ListboxOptionTag from './ListboxOptionTag.svelte';
   import Tag from './Tag.svelte';
-  import { SvelteMap } from 'svelte/reactivity';
   import { makeId } from '../base/tabs/tabs.ctx';
 
   const noop = () => {};
@@ -50,24 +49,26 @@
     blur0: 'blur0',
   };
 
-  let filtered: AllTagType[] = $state([]);
+  const tagNames = $derived(new Set(tags.filter((tag) => tag?.name).map((tag) => tag.name)));
+
+  const filtered = $derived.by<AllTagType[]>(() => {
+    const prefiltered = options.filter((option) => !tagNames.has(option.name));
+    const newTagName = inputValue.trim();
+    if (!newTagName) return prefiltered;
+
+    let containsInputValue = false;
+    const matches = prefiltered.filter((option) => {
+      const match = fuzzysearch(newTagName.toLowerCase(), option.name.toLowerCase());
+      if (match && newTagName.length === option.name.length) containsInputValue = true;
+      return match;
+    });
+
+    return canCreate && !containsInputValue ? [...matches, { name: newTagName }] : matches;
+  });
 
   function resetInput() {
     inputValue = '';
   }
-
-  let tagMap: Map<string, number>;
-
-  $effect(() => {
-    tagMap = new SvelteMap();
-    for (const t of tags) {
-      if (!t || !t.name) {
-        // console.log('TagAutocomplete', JSON.stringify(tags));
-        continue;
-      }
-      tagMap.set(t.name, 1);
-    }
-  });
 
   function handleConfirmSelection(d: AllTagType) {
     const tag: { name: string; id?: number } = { name: d.name };
@@ -76,39 +77,6 @@
     tags = tags;
     resetInput();
   }
-
-  $effect(() => {
-    const prefiltered = options.filter((o) => !tagMap.get(o.name));
-    if (inputValue) {
-      const newTagName = inputValue.trim();
-      let containsInputValue = false;
-      filtered = prefiltered.filter((o) => {
-        if (!o.name) return false;
-        const t = newTagName.toLowerCase();
-        const n = o.name.toLowerCase();
-        const match = fuzzysearch(t, n);
-        if (match && t.length === o.name.length) containsInputValue = true;
-        return match;
-      });
-      if (canCreate && !containsInputValue) {
-        const last = filtered[filtered.length - 1];
-        if (last) {
-          if ('id' in last) {
-            filtered.push({ name: newTagName });
-            filtered = filtered;
-          } else if (last.name !== newTagName) {
-            last.name = newTagName;
-            filtered = filtered;
-          }
-        } else {
-          filtered.push({ name: newTagName });
-          filtered = filtered;
-        }
-      }
-    } else {
-      filtered = prefiltered;
-    }
-  });
 
   $effect(() => {
     if (filtered.length === 0) close();
