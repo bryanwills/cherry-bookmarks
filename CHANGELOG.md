@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.10](https://github.com/haishanh/cherry/compare/v0.0.9...v0.0.10) (2026-09-07)
+
+Changed:
+
+- Fixed tag autocomplete suggestions becoming unresponsive after the first character.
+- Prevented bookmark stash keys from colliding between users.
+- Updated application dependencies and sign-in/sign-up styles.
+
 ## [0.0.8](https://github.com/haishanh/cherry/compare/v0.0.7...v0.0.8) (2024-04-14)
 
 Changed:
