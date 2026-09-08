@@ -81,7 +81,7 @@ jobs:
         with:
           images: ${{ steps.set-images.outputs.result }}
           flavor: |
-            suffix=-${{ matrix.arch }}
+            suffix=-${{ matrix.arch }},onlatest=true
 
       - name: Set git commit sha
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
